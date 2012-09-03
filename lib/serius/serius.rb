@@ -11,30 +11,44 @@ module Serius
       else
         @proc = args[:block]
       end
+      @enum = Enumerator.new do |yielder|
+        loop do
+          yielder << @proc.call(_step)
+        end
+      end
     end
 
-    def next
-      @proc.call(_step)
+    def to_s
+      "Serius:Serius #{self.object_id}"
     end
 
     def reset(i=@start)
       @i = i
+      @enum.rewind
+      self
     end
 
     def position
       @i
     end
 
-    def take(n, start=nil)
-      reset(start) if start
-      n.times.map { self.next}
-    end
-
-    def sum(n, start=nil)
-      take(n,start).inject{ |sum, i| sum += i}
+    def sum(n)
+      take(n).inject{ |sum, i| sum += i}
     end
 
     private
+
+    def method_missing(sym, *args, &block)
+      if @enum.respond_to?(sym)
+        if args.any?
+          @enum.send(sym, *args, &block)
+        else
+          @enum.send(sym, &block)
+        end
+      else
+        super
+      end
+    end
 
     def _step
       @i.tap{ @i += @step}

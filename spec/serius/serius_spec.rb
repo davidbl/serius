@@ -99,21 +99,11 @@ describe Serius do
       @s.next.should == 6
     end
 
-    it 'takes elements from a given starting point' do
-      @s.take(3,3).should == [3,4,5]
-      @s.position.should == 6
-      @s.next.should == 6
-    end
-
     it 'should sum elements' do
       s = Serius.new { |i| i*0.25 }
       s.sum(3).should == 0.75
     end
 
-    it 'should sum any portion of the series' do
-      s = Serius.new { |i| i*0.25 }
-      s.sum(3,3).should == 3.0
-    end
   end #context series metthods
 
   context 'prefab series' do
