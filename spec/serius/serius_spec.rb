@@ -74,6 +74,14 @@ describe Serius do
       @s.next.should == 5
     end
 
+    it 'honors aliases' do
+      @s.next.should == 1
+      @s.next.should == 2
+      @s.next.should == 3
+      @s.rewind
+      @s.next.should == 1
+    end
+
     it 'returns multiple elements' do
       @s.take(3).should == [1,2,3]
       @s.take(3).should == [4,5,6]

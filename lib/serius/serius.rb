@@ -27,6 +27,8 @@ module Serius
       @enum.rewind
       self
     end
+    alias_method :rewind, :reset
+
 
     def sum(n)
       take(n).inject{ |sum, i| sum += i}
