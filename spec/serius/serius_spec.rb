@@ -14,7 +14,7 @@ describe Serius do
   it 'has sensible defaults' do
     s = Serius.new { |i| i }
     s.step.should == 1
-    s.start.should == 0
+    s.start.should == 1
   end
 
   it 'honors the arguments' do
@@ -31,17 +31,17 @@ describe Serius do
     end
 
     it 'steps through a series' do
-      @s.next.should == 0
       @s.next.should == 1
       @s.next.should == 2
+      @s.next.should == 3
     end
     
     it 'steps at interval provided' do
       @s = Serius.new(step: 3) { |i| i }
-      @s.next.should == 0
-      @s.next.should == 3
-      @s.next.should == 6
-      @s.next.should == 9
+      @s.next.should == 1
+      @s.next.should == 4
+      @s.next.should == 7
+      @s.next.should == 10
     end
 
     it 'starts where directed' do
@@ -58,50 +58,36 @@ describe Serius do
       @s.next.should == 9
     end
 
-    it 'keeps up with the position' do
-      @s.next.should == 0
-      @s.position.should == 1
-      @s.next.should == 1
-      @s.position.should == 2
-      @s.next.should == 2
-      @s.position.should == 3
-    end
-
     it 'starts over if needed' do
-      @s.next.should == 0
       @s.next.should == 1
       @s.next.should == 2
-      @s.position.should == 3
+      @s.next.should == 3
       @s.reset
-      @s.position.should == 0
-      @s.next.should == 0
+      @s.next.should == 1
     end
 
     it 'start where told when resetting' do
-      @s.next.should == 0
       @s.next.should == 1
       @s.next.should == 2
-      @s.position.should == 3
+      @s.next.should == 3
       @s.reset 5
-      @s.position.should == 5
       @s.next.should == 5
     end
 
     it 'returns multiple elements' do
-      @s.take(3).should == [0,1,2]
-      @s.take(3).should == [3,4,5]
+      @s.take(3).should == [1,2,3]
+      @s.take(3).should == [4,5,6]
     end
 
     it 'maintains the correct position after taking multiples' do
-      @s.take(3).should == [0,1,2]
-      @s.take(3).should == [3,4,5]
-      @s.position.should == 6
-      @s.next.should == 6
+      @s.take(3).should == [1,2,3]
+      @s.take(3).should == [4,5,6]
+      @s.next.should == 7
     end
 
     it 'should sum elements' do
       s = Serius.new { |i| i*0.25 }
-      s.sum(3).should == 0.75
+      s.sum(3).should == 1.5
     end
 
   end #context series metthods
@@ -109,26 +95,26 @@ describe Serius do
   context 'prefab series' do
     it 'uses prefab' do
       s = Serius::Prefab.new{ |i| i}
-      s.next.should == 0
-      s.take(3).should == [1,2,3]
+      s.next.should == 1
+      s.take(3).should == [2,3,4]
     end
 
     it 'creates a prefab series that returns the even integers' do
       s = Serius::EvenInts.new
-      s.next.should == 0
-      s.take(3).should == [2,4,6]
+      s.next.should == 2
+      s.take(3).should == [4,6,8]
     end
 
     it 'creates a even integer prefab series with a block that i provide' do
       s = Serius::EvenInts.new { |n| 4*n}
-      s.next.should == 0
-      s.take(3).should == [8,16,24]
+      s.next.should == 8
+      s.take(3).should == [16,24,32]
     end
 
     it 'creates a even integer prefab series with a block that i provide and passes the index to it' do
       s = Serius::EvenInts.new { |n,i| 4*n*((-1)**i)}
-      s.next.should == 0
-      s.take(3).should == [-8,16,-24]
+      s.next.should == -8
+      s.take(3).should == [16,-24,32]
     end
 
     it 'creates a prefab series that returns the odd integers' do
@@ -138,7 +124,7 @@ describe Serius do
     end
 
     it 'approximates pi' do
-      s = Serius::OddInts.new { |n,i| ((-1.0)**i) / n }
+      s = Serius::OddInts.new { |n,i| ((-1.0)**(i+1)) / n }
       series_sum = s.sum(130_658)
       (4*series_sum).round(5).should == 3.14159
     end

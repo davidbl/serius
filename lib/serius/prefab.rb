@@ -19,7 +19,7 @@ module Serius
 
   class OddInts < Prefab
     def initialize(args = {}, &block)
-      args[:prefab] = Proc.new{ |i| 2*i+1 }
+      args[:prefab] = Proc.new{ |i| 2*i-1 }
       super(args, &block )
     end
   end

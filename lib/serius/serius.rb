@@ -3,7 +3,7 @@ module Serius
     attr_reader :step, :start
 
     def initialize(args={}, &block)
-      @start = args[:start] || 0
+      @start = args[:start] || 1
       @i = @start
       @step = args[:step] || 1
       if block_given?
@@ -26,10 +26,6 @@ module Serius
       @i = i
       @enum.rewind
       self
-    end
-
-    def position
-      @i
     end
 
     def sum(n)
