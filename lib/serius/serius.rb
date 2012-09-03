@@ -3,9 +3,11 @@ module Serius
     attr_reader :step, :start
 
     def initialize(args={}, &block)
+      @counter = 0
       @start = args[:start] || 1
       @i = @start
       @step = args[:step] || 1
+      @negation = args[:negation] || :none
       if block_given?
         @proc = block
       else
@@ -13,7 +15,7 @@ module Serius
       end
       @enum = Enumerator.new do |yielder|
         loop do
-          yielder << @proc.call(_step)
+          yielder << try_negate(@proc.call(_step))
         end
       end
     end
@@ -49,7 +51,25 @@ module Serius
     end
 
     def _step
+      @counter += 1
       @i.tap{ @i += @step}
+    end
+
+    def try_negate(val)
+      val*negate
+    end
+
+    def negate
+      case @negation
+      when :none
+        1
+      when :all
+        -1
+      when :even
+        @counter.even? ? -1 : 1
+      when :odd
+        @counter.odd? ? -1 : 1
+      end
     end
   end
 end

@@ -35,6 +35,39 @@ describe Serius do
       @s.next.should == 2
       @s.next.should == 3
     end
+
+    context 'negation' do
+      it 'negates all elems as directed' do
+       s = Serius.new(negation: :all){ |i| i }
+       s.next.should == -1
+       s.next.should == -2
+       s.next.should == -3
+      end
+
+      it 'negates no elems as directed' do
+       s = Serius.new(negation: :none){ |i| i }
+       s.next.should == 1
+       s.next.should == 2
+       s.next.should == 3
+      end
+
+      it 'negates even elems as directed' do
+       s = Serius.new(negation: :even){ |i| i }
+       s.next.should == 1
+       s.next.should == -2
+       s.next.should == 3
+       s.next.should == -4
+      end
+
+      it 'negates odd elems as directed' do
+       s = Serius.new(negation: :odd){ |i| i }
+       s.next.should == -1
+       s.next.should == 2
+       s.next.should == -3
+       s.next.should == 4
+      end
+    end # context 'negation'
+
     
     it 'steps at interval provided' do
       @s = Serius.new(step: 3) { |i| i }
@@ -133,6 +166,12 @@ describe Serius do
 
     it 'approximates pi' do
       s = Serius::OddInts.new { |n,i| ((-1.0)**(i+1)) / n }
+      series_sum = s.sum(130_658)
+      (4*series_sum).round(5).should == 3.14159
+    end
+
+    it 'approximates pi using negation' do
+      s = Serius::OddInts.new(negation: :even){ |n,i| 1.0 / n }
       series_sum = s.sum(130_658)
       (4*series_sum).round(5).should == 3.14159
     end
